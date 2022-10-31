@@ -43,7 +43,6 @@ export default function Edit({ editState, updateEditState, toggleRouteStatus, up
                     onClick={(e) => {
                         e.stopPropagation();
                         console.log(editRef.current.getBoundingClientRect());
-                        console.log(styles);
                     }}
                     onKeyDown={(e) => {
                         if (e.key === "Enter"){

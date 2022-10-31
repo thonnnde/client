@@ -12,6 +12,7 @@ export default function MapBoard({ listId, list, updateResponse}) {
     })
 
     const options = {
+        // mapId:'45b41d76d6b60f19',
         zoomControlOptions: {
             position: 'RIGHT_CENTER'
         }
@@ -53,13 +54,15 @@ export default function MapBoard({ listId, list, updateResponse}) {
                         height: '400px',
                         width: '100%'
                     }}
-                    zoom={2}
+                    zoom={4}    
                     center={{
                         lat: 0,
                         lng: -180
                     }}
                     options={options}
-                >
+                    >   
+
+                    console.log(list);
                     {list.todos[0].name !== null && list.status !== "OK" && (<DirectionsService
                         options={{
                             origin: list.todos[0].name,
@@ -70,9 +73,9 @@ export default function MapBoard({ listId, list, updateResponse}) {
                         callback={directionsCallback}
                     />)
                     }
-                    {list.response !== null && list.status === "OK"      && (<DirectionsRenderer
+                    {list.response !== null && list.status === "OK"  && (<DirectionsRenderer
                         options={{
-                            directions: list.response
+                            directions: list.response,
                         }}
                     />)
                     }

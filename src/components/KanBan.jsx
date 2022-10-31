@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import { Container, Row } from 'react-bootstrap';
+import { Carousel, Container, Row } from 'react-bootstrap';
 import KanBanNav from "./KanBanNav";
 import List from "./List";
 import NewTodo from './NewTodo';
 import Edit from './Edit';
 import MapBoard from './MapBoard';
 
+
 export default function KanBan() {
   const dummyData = [
     {
-      title: "我的行程",
+      title: "day1",
       //景點List
       todos: [
         {
@@ -33,8 +34,45 @@ export default function KanBan() {
       response: null,
       status: ""
     },
+    {
+      title:"day2",
+      todos: [
+        {
+          name:'阿底旦文化故事館',
+          finished: false,
+        },
+        {
+          name:'大武彩虹街',
+          finished: false, 
+        },
+        {
+          name:'南田部落',
+          finished:false,
+        },
+        {
+          name:'南田海岸親水公園',
+          finished: false,
+        },
+        {
+          name:'森永部落',
+          finished: false,
+        }, 
+        {
+          name:'VuVu野菜農園',
+          finished: false,
+        }
+      ],
+      response: null,
+      status:""
+    }
   ];
   const [lists, updateLists] = useState(dummyData);
+  //Carousel 的State
+  const [index, setIndex] = useState(0);
+
+  const handleSelect = (selectedIndex, e) => {
+    setIndex(selectedIndex);
+  };
 
   //修改框的state
   const [editState, updateEditState] = useState({
@@ -45,16 +83,21 @@ export default function KanBan() {
     todoId: 0,
   });
 
-
   function addTodo(listIndex, newTodo) {
     let newLists = [...lists];
     newLists[listIndex].todos.push({ name: newTodo, finished: false });
     updateLists(newLists);
   }
 
-  function toggleRouteStatus(listIndex){
+  function toggleRouteStatus(listIndex) {
     let newLists = [...lists];
     newLists[listIndex].status = "NOTOK";
+    updateLists(newLists);
+  }
+
+  function updateTodoList(listIndex, updatedTodoList){
+    let newLists = [...lists];
+    newLists[listIndex].todos = updatedTodoList;
     updateLists(newLists);
   }
 
@@ -62,9 +105,11 @@ export default function KanBan() {
     let newLists = [...lists];
     newLists[listIndex].todos[todoIndex] = { name: updatedTodo, finished: false };
     updateLists(newLists);
+    console.log(...lists);
+    console.log(editState);
   }
 
-  function updateResponse(ListId, updatedResponse){
+  function updateResponse(ListId, updatedResponse) {
     let newLists = [...lists];
     newLists[ListId].response = updatedResponse;
     newLists[ListId].status = "OK";
@@ -74,29 +119,33 @@ export default function KanBan() {
   return (
     <span>
       <KanBanNav></KanBanNav>
-      {lists.map((list, index) => (<MapBoard listId={index} list={list} updateResponse={updateResponse} >map</MapBoard>))}
-      <Container fluid className="board p-1">
-        <Row className="m-0">
-          {lists.map((list, index) => (
-            <List
-              key={index}
-              list={list}
-              listId={index}
-              addTodo={addTodo}
-              updateLists={updateLists}
-              updateEditState={updateEditState}
-              NewTodo={<NewTodo listId={index} addTodo={addTodo} />}
-            />
-          ))}
-        </Row>
-        {editState.show &&
-          <Edit
-            editState={editState}
-            updateEditState={updateEditState}
-            updateTodo={updateTodo}
-            toggleRouteStatus={toggleRouteStatus}>
-          </Edit>}
-      </Container>
-    </span>
+      <Carousel activeIndex={index} onSelect={handleSelect}>
+        {lists.map((list, index) => (<Carousel.Item key={index}>
+            <MapBoard listId={index} list={list} updateResponse={updateResponse} >map</MapBoard>
+            <Container fluid className="board p-1">
+              <Row className="m-0">
+                <List
+                  key={index}
+                  list={list} 
+                  listId={index}
+                  addTodo={addTodo}
+                  updateTodoList={updateTodoList}
+                  updateEditState={updateEditState}
+                  toggleRouteStatus={toggleRouteStatus}
+                  NewTodo={<NewTodo toggleRouteStatus={toggleRouteStatus} listId={index} addTodo={addTodo} />}
+                />
+              </Row>
+              {editState.show &&
+                <Edit
+                  key={index}
+                  editState={editState}
+                  updateEditState={updateEditState}
+                  updateTodo={updateTodo}
+                  toggleRouteStatus={toggleRouteStatus}>
+                </Edit>}
+            </Container>
+        </Carousel.Item>))}
+      </Carousel>
+    </span >
   );
 }

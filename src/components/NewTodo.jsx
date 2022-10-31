@@ -2,7 +2,7 @@ import React, {useState, useEffect, useRef} from 'react';
 import { Form } from 'react-bootstrap';
 
 
-export default function NewTodo({ listId, toggleShowNew, addTodo }) {
+export default function NewTodo({ listId, toggleShowNew, addTodo, toggleRouteStatus }) {
     const [autoHeight, updateAutoHeight] = useState(75);
     const textareaStyle = { //inline style
         height: `${autoHeight}px`,
@@ -16,6 +16,7 @@ export default function NewTodo({ listId, toggleShowNew, addTodo }) {
 
     //新增todo
     function handleAddTodo(e) {
+        toggleRouteStatus(listId);
         if (e.target.value.trim()){
             addTodo(listId, e.target.value);
         }
@@ -23,7 +24,7 @@ export default function NewTodo({ listId, toggleShowNew, addTodo }) {
         toggleShowNew();
     }
 
-    //更新高度值
+    //更新高度值s
     function autoResize(e) {
         updateAutoHeight(newTodoRef.current.scrollHeight);
     }

@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 
 
-
 export default function Todo({ todoId, name, listId, updateEditState }) {
     const [isOver, setIsOver] = useState(false);
     const targetRef = useRef(null);
