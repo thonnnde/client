@@ -130,8 +130,10 @@ export default function KanBan() {
                   listId={index}
                   addTodo={addTodo}
                   updateTodoList={updateTodoList}
+                  editState ={editState}
                   updateEditState={updateEditState}
                   toggleRouteStatus={toggleRouteStatus}
+
                   NewTodo={<NewTodo toggleRouteStatus={toggleRouteStatus} listId={index} addTodo={addTodo} />}
                 />
               </Row>
