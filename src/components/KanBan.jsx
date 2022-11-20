@@ -14,11 +14,11 @@ export default function KanBan() {
       //景點List
       todos: [
         {
-          name: "台北動物園",
+          name: "台北101",
           finished: false,
         },
         {
-          name: "公館夜市",
+          name: "中正紀念堂",
           finished: false,
         },
         {
@@ -35,35 +35,35 @@ export default function KanBan() {
       status: ""
     },
     {
-      title:"day2",
+      title: "day2",
       todos: [
         {
-          name:'阿底旦文化故事館',
+          name: '阿底旦文化故事館',
           finished: false,
         },
         {
-          name:'大武彩虹街',
-          finished: false, 
-        },
-        {
-          name:'南田部落',
-          finished:false,
-        },
-        {
-          name:'南田海岸親水公園',
+          name: '大武彩虹街',
           finished: false,
         },
         {
-          name:'森永部落',
+          name: '南田部落',
           finished: false,
-        }, 
+        },
         {
-          name:'VuVu野菜農園',
+          name: '南田海岸親水公園',
+          finished: false,
+        },
+        {
+          name: '森永部落',
+          finished: false,
+        },
+        {
+          name: 'VuVu野菜農園',
           finished: false,
         }
       ],
       response: null,
-      status:""
+      status: ""
     }
   ];
   const [lists, updateLists] = useState(dummyData);
@@ -94,8 +94,13 @@ export default function KanBan() {
     newLists[listIndex].status = "NOTOK";
     updateLists(newLists);
   }
+  function updateDirections(listIndex, updatedDirections) {
+    let newLists = [...lists];
+    newLists[listIndex].directions = updatedDirections;
+    updateLists(newLists);
+  }
 
-  function updateTodoList(listIndex, updatedTodoList){
+  function updateTodoList(listIndex, updatedTodoList) {
     let newLists = [...lists];
     newLists[listIndex].todos = updatedTodoList;
     updateLists(newLists);
@@ -117,37 +122,70 @@ export default function KanBan() {
   }
 
   return (
-    <span>
+    <span className='fullSpan'>
       <KanBanNav></KanBanNav>
-      <Carousel activeIndex={index} onSelect={handleSelect}>
-        {lists.map((list, index) => (<Carousel.Item key={index}>
-            <MapBoard listId={index} list={list} updateResponse={updateResponse} >map</MapBoard>
-            <Container fluid className="board p-1">
-              <Row className="m-0">
-                <List
-                  key={index}
-                  list={list} 
-                  listId={index}
-                  addTodo={addTodo}
-                  updateTodoList={updateTodoList}
-                  editState ={editState}
-                  updateEditState={updateEditState}
-                  toggleRouteStatus={toggleRouteStatus}
+      <div
+        style={{
+          padding: "25px 100px 75px",
+          width: "100%",
+          // height: "100%",
+          // content: "",
+          clear: 'both',
+          display: 'table'
+        }}>
+        <div
+          style={{
+            display: 'inline-block',
+            width: '75%',
+            // textAlign: 'center'
+          }}>
+          <MapBoard listId={index} list={lists[index]} updateResponse={updateResponse} updateDirections={updateDirections}>map</MapBoard>
+        </div>
+        <div
+          style={{
+            display: 'inline-block',
+            width: '25%',
+            height: '600px',
+            verticalAlign: 'top',
+            // height: '100%',
+          }}>
+          <Carousel fade activeIndex={index} onSelect={handleSelect} interval={null}>
+            {lists.map((list, index) => (<Carousel.Item key={index}>
+              <div style={{
+                padding: '10px 50px 75px',
+                height: '600px',
+                backgroundColor: '#ACACAC',
+                verticalAlign: 'top',
+              }}>
+                <Container fluid className="board p-1">
+                  <Row className="m-0">
+                    <List
+                      key={index}
+                      list={list}
+                      listId={index}
+                      addTodo={addTodo}
+                      updateTodoList={updateTodoList}
+                      editState={editState}
+                      updateEditState={updateEditState}
+                      toggleRouteStatus={toggleRouteStatus}
 
-                  NewTodo={<NewTodo toggleRouteStatus={toggleRouteStatus} listId={index} addTodo={addTodo} />}
-                />
-              </Row>
-              {editState.show &&
-                <Edit
-                  key={index}
-                  editState={editState}
-                  updateEditState={updateEditState}
-                  updateTodo={updateTodo}
-                  toggleRouteStatus={toggleRouteStatus}>
-                </Edit>}
-            </Container>
-        </Carousel.Item>))}
-      </Carousel>
+                      NewTodo={<NewTodo toggleRouteStatus={toggleRouteStatus} listId={index} addTodo={addTodo} />}
+                    />
+                  </Row>
+                  {editState.show &&
+                    <Edit
+                      key={index}
+                      editState={editState}
+                      updateEditState={updateEditState}
+                      updateTodo={updateTodo}
+                      toggleRouteStatus={toggleRouteStatus}>
+                    </Edit>}
+                </Container>
+              </div>
+            </Carousel.Item>))}
+          </Carousel>
+        </div>
+      </div>
     </span >
   );
 }

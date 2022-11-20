@@ -3,15 +3,15 @@ import { Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 export default function Todo({ editState, id, todoId, name, listId, updateEditState }) {
     const [isOver, setIsOver] = useState(false);
     const targetRef = useRef(null);
     const { setNodeRef, listeners, transform, transition } = useSortable({id})
     const styles = {
-        border: "1px solid red",
         marginTop: "10px",
-        transform: CSS.Transform.toString(transform),
+        transform: CSS.Translate.toString(transform),
         transition,
     }
 
@@ -22,9 +22,10 @@ export default function Todo({ editState, id, todoId, name, listId, updateEditSt
     function handleOnLeave() {
         setIsOver(false);
     }
-
+    //edit 按鈕功能
     function handleClickEdit() {
         const { top, left, width } = targetRef.current.getBoundingClientRect
+        console.log('top: ' + top + ' left: ' + left + ' width:' + width);
         updateEditState({
             show: true,
             dimensions: { top: top, left: left, width: width },
@@ -32,10 +33,11 @@ export default function Todo({ editState, id, todoId, name, listId, updateEditSt
             listId: listId,
             todoId: todoId
         });
+        
     }
 
     return (
-        <li ref={setNodeRef}
+        <div ref={setNodeRef}
             {...listeners}
             style={styles}
         >
@@ -50,6 +52,6 @@ export default function Todo({ editState, id, todoId, name, listId, updateEditSt
                         <FontAwesomeIcon icon={faPencilAlt} />
                     </Button>)}
             </div>
-        </li>
+        </div>
     );
 }

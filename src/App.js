@@ -4,7 +4,7 @@ import KanBan from './components/KanBan';
 
 function App() {
   return (
-    <div className="App">
+    <div className="App" style={{height:'100%', weight:'100%'}}>
       <KanBan/>
     </div>
   );

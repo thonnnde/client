@@ -5,14 +5,20 @@ import Offcanvas from 'react-bootstrap/Offcanvas';
 import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRoute } from '@fortawesome/free-solid-svg-icons';
-import { DndContext } from "@dnd-kit/core";
-import { SortableContext } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+import { DndContext, useSensor, useSensors, PointerSensor, closestCenter } from "@dnd-kit/core";
+import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 
 
-export default function List({ editState,title, list, listId, NewTodo, updateEditState, updateTodoList, toggleRouteStatus }) {
+export default function List({ editState, title, list, listId, NewTodo, updateEditState, updateTodoList, toggleRouteStatus }) {
 
     const [showNew, updateShowNew] = useState(false);
+
+    const sensors = useSensors(useSensor(PointerSensor, {
+        activationConstraint: {
+            delay: 500,
+            tolerance: 0,
+        }
+    }))
 
     //切換NewTodo
     function toggleShowNew(e) {
@@ -23,37 +29,44 @@ export default function List({ editState,title, list, listId, NewTodo, updateEdi
     const handleClose = () => updateShowRoute(false);
     const handleShow = () => updateShowRoute(true);
 
-    // function onSortEnd(oldIndex, newIndex) {
-    //     // toggleRouteStatus(listId)
-    //     console.log(arrayMoveImmutable(list.todos, 0, 1))
-    //     console.log("oldindex: " + oldIndex, "newIndex: " + newIndex);
-    //     updateTodoList(listId, (arrayMoveImmutable(list.todos, oldIndex, newIndex)))
-    // }
+
+    //drag完的操作
+    function drageEndEvent(props) {
+        const { active, over } = props
+        const activeIndex = list.todos.indexOf(active.id)
+        const overIndex = list.todos.indexOf(over.id)
+        toggleRouteStatus(listId)
+        updateTodoList(listId, arrayMove(list.todos, activeIndex, overIndex))
+    }
 
     return (
-        <div className="list p-2 m-1 rounded-lg">
+        <div className="list p-2 m-1 rounded-lg" style={{fontFamily:'微軟正黑體'}}>
             <div className="title">{title}</div>
-            <DndContext>
+            <DndContext onDragEnd={drageEndEvent} sensors={sensors} collisionDetection={closestCenter}>
                 <SortableContext items={list.todos}>
+                    <h2 >第{listId+1}天</h2>
                     {list.todos.map((todo, index) => (
                         <Todo id={todo} key={index} todo={todo} name={todo.name} editState={editState} updateEditState={updateEditState} listId={listId} todoId={index} />
                     ))}
                 </SortableContext>
             </DndContext>
             {showNew && React.cloneElement(NewTodo, { toggleShowNew })}
-            {!showNew && (
-                <div className="footer pt-2  d-flex">
-                    <Button
-                        className="py-1 flex-grow-1 text-left"
-                        onClick={toggleShowNew}
-                    >+ New</Button>
-                </div>)}
-            <Button variant="primary" onClick={handleShow}>
-                <FontAwesomeIcon icon={faRoute} />
-            </Button>
-            <Offcanvas show={showRoute} onHide={handleClose}>
+            <div style={{verticalAlign:'middle', lineHeight: '38px', width:'90%'}}>
+                {!showNew && (
+                    <div className="footer pt-2  d-flex" style={{position:'relative',float: 'left',width:'40%', height:'50px', margin:'1px 10px 1px 15px'}} >
+                        <Button style={{position:'relative', width:'100%', height:'40px',top: '15px'}}
+                            className="py-1 flex-grow-1 text-left"
+                            onClick={toggleShowNew}
+                        >新增景點</Button>
+                    </div>)}
+                <div style={{position:'relative', float: 'left',width:'120px',height:'50px',margin:'1px 5px 1px 0px'}}>
+                    <Button variant="primary" onClick={handleShow} style={{position:'relative', width:'100%', top: '22px', height:'40px'}}>
+                        <FontAwesomeIcon icon={faRoute} />路線資訊
+                    </Button></div>
+            </div>
+            <Offcanvas show={showRoute} onHide={handleClose} style={{fontFamily:'微軟正黑體'}}>
                 <Offcanvas.Header closeButton>
-                    <Offcanvas.Title>行程導航</Offcanvas.Title>
+                    <Offcanvas.Title>路線資訊</Offcanvas.Title>
                 </Offcanvas.Header>
                 <Offcanvas.Body>
                     {list.response != null && list.response.routes[0].legs.map((leg, index) =>

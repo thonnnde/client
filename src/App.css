@@ -28,6 +28,28 @@
   color: #61dafb;
 }
 
+.html,body{
+  height: 100%;
+}
+
+/* .outer {
+  height:auto;
+  background-color: #80C1A8;
+  object-fit:cover;
+}
+.mapBoard {
+  float:left;
+  width:65%;
+  height:auto;
+}
+
+.routePanel{
+  float:left;
+  width:35%;
+  background-color: #F5F5F5;
+  height:auto;
+} */
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
