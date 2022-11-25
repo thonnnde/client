@@ -6,10 +6,10 @@ import { updateResults } from '../reducers/mapSettingSlice';
 
 
 export default function MapUI({ mapSetting }) {
-    const center = { lat: 25.033964, lng: 121.564468}
+    const center = { lat: 25.033964, lng: 121.564468 }
 
     const dispatch = useDispatch();
-
+    const [directionsResponse, setDirectionsResponse] = useState({ routes: [] });
     const [map, setMap] = useState(/** @type google.maps.Map */(null))
 
     const { isLoaded, loadError } = useJsApiLoader({
@@ -19,15 +19,16 @@ export default function MapUI({ mapSetting }) {
 
     if (!isLoaded) {
         console.log('not loaded');
-    } else {
-        console.log('loaded');
     }
+
     if (loadError) {
         console.log(loadError);
     }
 
     useEffect(() => {
-        console.log("hi")
+        if (mapSetting.status === "notFound") {
+            clearRoute();
+        }
         calculateRoute();
     }, [mapSetting.status])
 
@@ -36,12 +37,15 @@ export default function MapUI({ mapSetting }) {
             const directionService = new google.maps.DirectionsService()
             const results = await directionService.route({
                 origin: mapSetting.origin,
+                waypoints: mapSetting.waypoints,
                 destination: mapSetting.destination,
                 travelMode: mapSetting.travelMode,
-                waypoints: mapSetting.waypoints
             });
             if (results.status === 'OK') {
-                dispatch(updateResults(results))
+                console.log(results);
+                setDirectionsResponse(results);
+                dispatch(updateResults(results));
+                console.log(directionsResponse);
             }
             else {
                 console.log(results);
@@ -50,7 +54,7 @@ export default function MapUI({ mapSetting }) {
     }
 
     function clearRoute() {
-        dispatch(updateResults(null));
+        setDirectionsResponse({ routes: [] });
     }
 
     return (
@@ -67,7 +71,7 @@ export default function MapUI({ mapSetting }) {
                 }}
             // onLoad={(map) => setMap(map)}
             >
-                {mapSetting.status === "found" && <DirectionsRenderer directions={mapSetting.results} />} 
+                {mapSetting.status === "found" && <DirectionsRenderer directions={directionsResponse} />}
             </GoogleMap>
         </div>
     )

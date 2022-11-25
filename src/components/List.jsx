@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
-import View from "../containers/ViewContainer";
+import View from "./View";
 import { Button } from "react-bootstrap";
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import Card from 'react-bootstrap/Card';
-import NewView from "../containers/NewViewContainer";
+import NewView from "./NewView";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRoute } from '@fortawesome/free-solid-svg-icons';
 import { DndContext, useSensor, useSensors, PointerSensor, closestCenter } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { useDispatch} from 'react-redux';
-import { exchangeViewsOrder, formMapPlan} from "../reducers/routePlanSlice";
-import { updateMapPlan } from "../reducers/mapSettingSlice";
+import { exchangeViewsOrder } from "../reducers/routePlanSlice";
 
-export default function List({ routePlan, title, list, listId }) {
+
+export default function List({ title, list, listId }) {
 
     const [showNew, updateShowNew] = useState(false);
     const dispatch = useDispatch();
@@ -32,7 +32,6 @@ export default function List({ routePlan, title, list, listId }) {
     const handleClose = () => updateShowRoute(false);
     const handleShow = () => updateShowRoute(true);
 
-
     //drag完的操作
     function drageEndEvent(props) {
         const { active, over } = props
@@ -41,8 +40,6 @@ export default function List({ routePlan, title, list, listId }) {
         // toggleRouteStatus(listId)
         const updatedViews = arrayMove(list.views, activeIndex, overIndex)
         dispatch(exchangeViewsOrder({listId, updatedViews}));
-        const mapPlan = formMapPlan(routePlan, listId);
-        dispatch(updateMapPlan(mapPlan))
     }
 
     return (

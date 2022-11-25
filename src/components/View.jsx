@@ -1,12 +1,11 @@
 import React, { useState, useRef } from 'react';
-import Edit from "../containers/EditContainer"
+import Edit from "./Edit";
 import { Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencilAlt, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { removeView, formMapPlan} from "../reducers/routePlanSlice";
-import { updateMapPlan } from "../reducers/mapSettingSlice";
+import { removeView} from "../reducers/routePlanSlice";
 import { useDispatch } from 'react-redux';
 
 export default function View({ routePlan, id, viewId, name, listId }) {
@@ -23,8 +22,6 @@ export default function View({ routePlan, id, viewId, name, listId }) {
 
     function handleClickDelete(){
         dispatch(removeView({listId, viewId}));
-        const mapPlan = formMapPlan(routePlan, listId);
-        dispatch(updateMapPlan(mapPlan))
     }
 
     function handleOnOver() {

@@ -89,9 +89,6 @@ const routePlanSlice = createSlice({
           state[listId].views = updatedViews;
           state[listId].responseStatus = "changed";
         },
-        getState(state){
-          return {state};
-        }
         //更新導航資料
         // updateResponse(state, action){
         //   const {listId, updatedResponse} = action.payload;
@@ -107,12 +104,11 @@ const routePlanSlice = createSlice({
 
 export const { addView, updateView, removeView, exchangeViewsOrder, updateResponse, updateResponseStatus, getState} = routePlanSlice.actions;
 
-export function formMapPlan(state, listId){
-  const views = state[listId].views;
+export function formMapPlan(views){
   const origin = views[0].name;
   const destination = views[views.length -1].name;
-  const waypoint = (views.length > 2 ? views.slice(1, -1).map(getWaypoints): null);
-  return ({origin, destination, waypoint});
+  const waypoints = (views.length > 2 ? views.slice(1, -1).map(getWaypoints): null);
+  return {origin, destination, waypoints};
 }
 
 export default routePlanSlice.reducer; 

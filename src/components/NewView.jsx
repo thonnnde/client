@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Form } from 'react-bootstrap';
-import { addView, formMapPlan } from "../reducers/routePlanSlice";
-import { updateMapPlan } from "../reducers/mapSettingSlice";
+import { addView } from "../reducers/routePlanSlice";
 import { useDispatch} from 'react-redux';
 
 
@@ -22,8 +21,6 @@ export default function NewView({ routePlan, listId, toggleShowNew, toggleRouteS
         // toggleRouteStatus(listId);
         if (e.target.value.trim()) {
             dispatch(addView({ listId, name: e.target.value }));
-            const mapPlan = formMapPlan(routePlan, listId);
-            dispatch(updateMapPlan(mapPlan))
         }
         e.target.value = "";
         toggleShowNew();

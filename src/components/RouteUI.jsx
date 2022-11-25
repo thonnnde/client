@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Carousel, Container, Row } from 'react-bootstrap';
-import List from "../containers/ListContainer";
+import List from "./List";
 import MapUI from '../containers/MapUIContainer';
+import { formMapPlan } from "../reducers/routePlanSlice";
+import { updateMapPlan } from "../reducers/mapSettingSlice";
+import { useDispatch } from 'react-redux';
 
 export default function RouteUI({routePlan}) {
- 
+  
+  const dispatch = useDispatch();
   //Carousel 的State
   const [index, setIndex] = useState(0);
 
@@ -12,10 +16,16 @@ export default function RouteUI({routePlan}) {
     setIndex(selectedIndex);
   };
 
+  useEffect(() => {
+    const mapPlan = formMapPlan(routePlan[index].views);
+    dispatch(updateMapPlan(mapPlan))
+  },[routePlan[index].views])
+
+
 
   return (
     <span className='fullSpan'>
-      <div className="outer"
+      <div
         style={{
           padding: "25px 100px 75px",
           width: "100%",

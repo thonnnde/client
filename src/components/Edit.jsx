@@ -1,7 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { Form } from "react-bootstrap";
-import { updateView, formMapPlan } from "../reducers/routePlanSlice";
-import { updateMapPlan } from "../reducers/mapSettingSlice";
+import { updateView } from "../reducers/routePlanSlice";
 import { useDispatch} from "react-redux";
 
 export default function Edit({ routePlan, viewId, editState, setEditState, listId }) {
@@ -27,8 +26,6 @@ export default function Edit({ routePlan, viewId, editState, setEditState, listI
         if (e.target.value.trim()) {
             // toggleRouteStatus(editState.listId);
             dispatch(updateView(listId, viewId, e.target.value));
-            const mapPlan = formMapPlan(routePlan, listId);
-            dispatch(updateMapPlan(mapPlan))
         }
         e.target.value = "";
         toggleEditShow();
