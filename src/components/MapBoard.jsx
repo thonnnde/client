@@ -1,39 +1,40 @@
 import React, { useState } from 'react';
 import { DirectionsRenderer, DirectionsService, GoogleMap, useLoadScript } from "@react-google-maps/api";
 import Spinner from 'react-bootstrap/Spinner';
+import { updateResponse, updateResponseStatus } from "../reducers/routePlanSlice";
+import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 
-
-export default function MapBoard({ listId, list, updateResponse, updateDirections }) {
+export default function MapBoard({ listId, list }) {
     const { isLoaded, loadError } = useLoadScript({
         id: 'script-loader',
         version: 'weekly',
         googleMapsApiKey: "AIzaSyDOhTegV0-X10RYdbgQwwP7acLrluHoX4M",
     })
 
-    const [mapInfo, setMapInfo] = useState({
-        response: null,
-        travelMode: 'DRIVING',
-        waypoints: [],
-        origin: '',
-        destination: ''
-    })
+    // useEffect(() => {
+    //     setRerender(!rerender)
+    // },[list.responseStatus]);
 
-    useEffect(() => {
-        if (list.todos) {
-            console.log(list.todos[0].name)
-            setMapInfo({
-                response: null,
-                travelMode: 'DRIVING',
-                waypoints: list.todos.slice(1, -1).map(getWaypoint),
-                origin: list.todos[0].name,
-                destination: list.todos[list.todos.length - 1].name,
-            })
-        }
-    }, [list])
+    const dispatch = useDispatch();
+
+    // useEffect(() => {
+    //     if (list.views) {
+    //         console.log(list.views[0].name)
+    //         console.log(list.views[list.views.length - 1].name)
+    //         console.log(list.views.slice(1, -1).map(getWaypoint))
+    //         setMapInfo({
+    //             response: null,
+    //             travelMode: 'DRIVING',
+    //             waypoints: list.views.slice(1, -1).map(getWaypoint),
+    //             origin: list.views[0].name,
+    //             destination: list.views[list.views.length - 1].name,
+    //         })
+    //     }
+    // }, [list])
 
     const options = {
-        // mapId: '45b41d76d6b60f19',
+        mapId:'45b41d76d6b60f19',
         zoomControlOptions: {
             position: 'RIGHT_CENTER'
         }
@@ -45,15 +46,12 @@ export default function MapBoard({ listId, list, updateResponse, updateDirection
         console.log(response)
         if (response !== null) {
             if (response.status === "OK") {
-                updateResponse(listId, response)
-                setMapInfo({
-                    response: response,
-                    ...response
-                })
+                dispatch(updateResponse({listId, updatedResponse:response}));
+                dispatch(updateResponseStatus({listId, updatedResStat:"found"}));
+                }
             } else {
                 console.log("reponse: ", response)
             }
-        }
     }
 
     //取得waypoints資
@@ -64,12 +62,20 @@ export default function MapBoard({ listId, list, updateResponse, updateDirection
                 stopover: true
             })
     }
+    const [map, setMap] = useState(null);
 
+    const onLoad = React.useCallback(function callback(map) {
+        setMap(map);
+      }, []);
+    
+      const onUnmount = React.useCallback(function callback(map) {
+        setMap(null);
+      }, []);
     //response: null,
-    // origin: lists[0].todos[0].name,
-    // destination: lists[0].todos[lists[0].todos.length - 1].name,
+    // origin: lists[0].views[0].name,
+    // destination: lists[0].views[lists[0].views.length - 1].name,
     // travelMode: 'DRIVING',
-    // waypoints: lists[0].todos.slice(1, -1).map(getWaypoint),
+    // waypoints: lists[0].views.slice(1, -1).map(getWaypoint),
     const renderMap = () => {
         return (
             <div className="map-container">
@@ -84,19 +90,21 @@ export default function MapBoard({ listId, list, updateResponse, updateDirection
                         lat: 0,
                         lng: -180
                     }}
+                    onLoad={onLoad}
+                    onUnmount={onUnmount}
                     options={options}
                 >
-                    {list.todos[0].name !== null && list.status !== "OK" && (<DirectionsService
+                    {list.responseStatus !== "found" && (<DirectionsService
                         options={{
-                            destination: mapInfo.destination,
-                            origin: mapInfo.origin,
-                            travelMode: mapInfo.travelMode,
-                            waypoints: mapInfo.waypoints,
+                            travelMode: 'DRIVING',
+                            waypoints: list.views.slice(1, -1).map(getWaypoint),
+                            origin: list.views[0].name,
+                            destination: list.views[list.views.length - 1].name,
                         }}
                         callback={directionsCallback}
                     />)}
-                    {list.response !== null && list.status === "OK" && (<DirectionsRenderer
-                        directions={mapInfo.response}
+                    {list.response !== null && list.responseStatus === "found" && (<DirectionsRenderer
+                        directions={list.response} 
                     // onDirectionsChanged={()=> (console.log(list.response))}
                     />)
                     } 

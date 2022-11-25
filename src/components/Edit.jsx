@@ -1,33 +1,36 @@
-import React, {useRef, useEffect} from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Form } from "react-bootstrap";
+import { updateView, formMapPlan } from "../reducers/routePlanSlice";
+import { updateMapPlan } from "../reducers/mapSettingSlice";
+import { useDispatch} from "react-redux";
 
-export default function Edit({ editState, updateEditState, toggleRouteStatus, updateTodo}) {
-    const styles ={
+export default function Edit({ routePlan, viewId, editState, setEditState, listId }) {
+    const styles = {
         position: "relative",
         margin: 0,
         ...editState.dimensions,
     };
 
+    const dispatch = useDispatch();
     const editRef = useRef(null);
 
     useEffect(() => {
         editRef.current.focus();
-    },[]);
- 
+    }, []);
+
     function toggleEditShow() {
-        updateEditState({
-            ...editState,
-            show: false,
-        });
+        setEditState(false);
     }
 
     //Edit Todo
-    function handleUpdateTodo(e) {
-        if (e.target.value.trim()){
-            toggleRouteStatus(editState.listId);
-            updateTodo(editState.listId, editState.todoId, e.target.value);
+    function handleUpdateView(e) {
+        if (e.target.value.trim()) {
+            // toggleRouteStatus(editState.listId);
+            dispatch(updateView(listId, viewId, e.target.value));
+            const mapPlan = formMapPlan(routePlan, listId);
+            dispatch(updateMapPlan(mapPlan))
         }
-        e.target.value ="";
+        e.target.value = "";
         toggleEditShow();
     }
 
@@ -35,21 +38,22 @@ export default function Edit({ editState, updateEditState, toggleRouteStatus, up
     return (
         <Form className="edit-form" onClick={toggleEditShow}>
             <div>
-                <Form.Control 
+                <Form.Control
                     style={styles}
-                    ref={editRef} 
-                    as="textarea" 
+                    ref={editRef}
+                    as="textarea"
                     row="3"
+                    onBlur={toggleEditShow}
                     onClick={(e) => {
                         e.stopPropagation();
                         console.log(editRef.current.getBoundingClientRect());
                     }}
                     onKeyDown={(e) => {
-                        if (e.key === "Enter"){
-                            handleUpdateTodo(e);
+                        if (e.key === "Enter") {
+                            handleUpdateView(e);
                         }
                     }}
-                     />
+                />
             </div>
         </Form>
     );

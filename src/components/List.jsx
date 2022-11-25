@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
-import Todo from "./Todo";
+import View from "../containers/ViewContainer";
 import { Button } from "react-bootstrap";
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import Card from 'react-bootstrap/Card';
+import NewView from "../containers/NewViewContainer";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRoute } from '@fortawesome/free-solid-svg-icons';
 import { DndContext, useSensor, useSensors, PointerSensor, closestCenter } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
+import { useDispatch} from 'react-redux';
+import { exchangeViewsOrder, formMapPlan} from "../reducers/routePlanSlice";
+import { updateMapPlan } from "../reducers/mapSettingSlice";
 
-
-export default function List({ editState, title, list, listId, NewTodo, updateEditState, updateTodoList, toggleRouteStatus }) {
+export default function List({ routePlan, title, list, listId }) {
 
     const [showNew, updateShowNew] = useState(false);
-
+    const dispatch = useDispatch();
     const sensors = useSensors(useSensor(PointerSensor, {
         activationConstraint: {
             delay: 500,
@@ -33,24 +36,27 @@ export default function List({ editState, title, list, listId, NewTodo, updateEd
     //drag完的操作
     function drageEndEvent(props) {
         const { active, over } = props
-        const activeIndex = list.todos.indexOf(active.id)
-        const overIndex = list.todos.indexOf(over.id)
-        toggleRouteStatus(listId)
-        updateTodoList(listId, arrayMove(list.todos, activeIndex, overIndex))
+        const activeIndex = list.views.indexOf(active.id)
+        const overIndex = list.views.indexOf(over.id)
+        // toggleRouteStatus(listId)
+        const updatedViews = arrayMove(list.views, activeIndex, overIndex)
+        dispatch(exchangeViewsOrder({listId, updatedViews}));
+        const mapPlan = formMapPlan(routePlan, listId);
+        dispatch(updateMapPlan(mapPlan))
     }
 
     return (
         <div className="list p-2 m-1 rounded-lg" style={{fontFamily:'微軟正黑體'}}>
             <div className="title">{title}</div>
             <DndContext onDragEnd={drageEndEvent} sensors={sensors} collisionDetection={closestCenter}>
-                <SortableContext items={list.todos}>
+                <SortableContext items={list.views}>
                     <h2 >第{listId+1}天</h2>
-                    {list.todos.map((todo, index) => (
-                        <Todo id={todo} key={index} todo={todo} name={todo.name} editState={editState} updateEditState={updateEditState} listId={listId} todoId={index} />
+                    {list.views.map((view, index) => (
+                        <View id={view} key={index} name={view.name} listId={listId} viewId={index} />
                     ))}
                 </SortableContext>
             </DndContext>
-            {showNew && React.cloneElement(NewTodo, { toggleShowNew })}
+            {showNew && <NewView listId={listId} toggleShowNew={toggleShowNew}/>}
             <div style={{verticalAlign:'middle', lineHeight: '38px', width:'90%'}}>
                 {!showNew && (
                     <div className="footer pt-2  d-flex" style={{position:'relative',float: 'left',width:'40%', height:'50px', margin:'1px 10px 1px 15px'}} >
@@ -64,7 +70,7 @@ export default function List({ editState, title, list, listId, NewTodo, updateEd
                         <FontAwesomeIcon icon={faRoute} />路線資訊
                     </Button></div>
             </div>
-            <Offcanvas show={showRoute} onHide={handleClose} style={{fontFamily:'微軟正黑體'}}>
+            <Offcanvas key={listId} show={showRoute} onHide={handleClose} style={{fontFamily:'微軟正黑體'}}>
                 <Offcanvas.Header closeButton>
                     <Offcanvas.Title>路線資訊</Offcanvas.Title>
                 </Offcanvas.Header>

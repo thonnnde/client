@@ -1,11 +1,12 @@
 import './App.css';
 import "bootswatch/dist/flatly/bootstrap.min.css";
-import KanBan from './components/KanBan';
+import RouteUI from "./containers/RouteUIContainer"
+import PersonalPage from './components/PersonalPage';
 
 function App() {
   return (
     <div className="App" style={{height:'100%', weight:'100%'}}>
-      <KanBan/>
+      <RouteUI></RouteUI>
     </div>
   );
 }
