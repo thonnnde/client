@@ -83,14 +83,14 @@ const routePlanSlice = createSlice({
         state[0].routeChanged = true;
       }
       else {
-        state[0].route[listId].views.push({ name: name, finished: false });
+        state[0].route[listId].views.push({ name: name, pluscode:"",finished: false });
         state[0].routeChanged = true;
       }
     },
     //更新景點
     updateView(state, action) {
       const { listId, viewId, name } = action.payload;
-      state[0].route[listId].views[viewId] = { name: name, finished: false };
+      state[0].route[listId].views.splice(viewId, 1, { name: name,  pluscode:"",  finished: false });
       state[0].routeChanged = true;
     },
     //刪除景點

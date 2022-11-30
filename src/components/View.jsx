@@ -8,7 +8,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { removeView} from "../reducers/routePlanSlice";
 import { useDispatch } from 'react-redux';
 
-export default function View({ routePlan, id, viewId, name, listId }) {
+export default function View({ id, viewId, name, listId }) {
     const [isOver, setIsOver] = useState(false);
     const [editState, setEditState] = useState(false);
     const dispatch = useDispatch();
