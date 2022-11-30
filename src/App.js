@@ -1,5 +1,6 @@
+ /* global google*/
 import './App.css';
-import "bootswatch/dist/flatly/bootstrap.min.css";
+import "bootswatch/dist/solar/bootstrap.min.css";
 import RouteUI from "./containers/RouteUIContainer"
 import PersonalPage from './components/PersonalPage';
 
